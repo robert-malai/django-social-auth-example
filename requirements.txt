@@ -1,0 +1,5 @@
+social-auth-core[all]
+django
+django-jinja
+social-auth-app-django
+psycopg2
