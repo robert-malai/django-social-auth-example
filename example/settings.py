@@ -141,6 +141,28 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.debug.debug'
 )
 
+SOCIAL_AUTH_DISCONNECT_PIPELINE = (
+    # ExtraNotes: Custom handling for preventing disconnects
+    'app.extended_pipeline.prepare_disconnect',
+    # Verifies that the social association can be disconnected from the current
+    # user (ensure that the user login mechanism is not compromised by this
+    # disconnection).
+    # Extra notes: checks that user has a password in our system or another auth provider,
+    # but we'll disable this check for now
+    #'social_core.pipeline.disconnect.allowed_to_disconnect',
+
+    # Collects the social associations to disconnect.
+    'social_core.pipeline.disconnect.get_entries',
+
+    # Revoke any access_token when possible.
+    'social_core.pipeline.disconnect.revoke_tokens',
+
+    # Removes the social associations.
+    'social_core.pipeline.disconnect.disconnect',
+    # Extra notes: cleanup if user has no other login mechanism
+    'app.extended_pipeline.cleanup_after_disconnect',
+)
+
 SOCIAL_AUTH_FACEBOOK_KEY = '1395455070509468'
 SOCIAL_AUTH_FACEBOOK_SECRET = 'f9550e7d79e77326bee6125472ff401a'
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
